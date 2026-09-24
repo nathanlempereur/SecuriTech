@@ -1,0 +1,6 @@
+Zones,IP-Zone,Status-Zone,User-Error,SSH-Error,tmp-Error,AuthLogs-Error
+Z1-AgriTech,N/A,STOPPED,N/A,N/A,N/A,N/A
+Z2-BedTech,N/A,STOPPED,N/A,N/A,N/A,N/A
+Z3-HealthTech,N/A,STOPPED,N/A,N/A,N/A,N/A
+Z4-OpenSpaceTech,N/A,STOPPED,N/A,N/A,N/A,N/A
+Z5-EnergyTech,N/A,STOPPED,N/A,N/A,N/A,N/A
