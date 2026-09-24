@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z5-EnergyTech | CONSOLE INGÉNIERIE LOURDE</title>
+    <style>
+        :root {
+            --bg-dark: #070500;
+            --ind-yellow: #ffd900;
+            --ind-orange: #ff5e00;
+            --ind-red: #d90000;
+            --panel-gray: #1a1a1a;
+            --border-metal: #404040;
+            --text-bright: #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--ind-yellow);
+            font-family: 'Arial Black', Impact, sans-serif; /* Police très industrielle/épaisse */
+            padding: 10px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Bandes de danger industrielles (Jaune/Noir) */
+        .danger-tape {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--ind-yellow),
+                var(--ind-yellow) 20px,
+                #000000 20px,
+                #000000 40px
+            );
+            height: 15px;
+            width: 100%;
+            border: 2px solid #000;
+        }
+
+        /* --- HEADER MASSIF --- */
+        header {
+            background: var(--panel-gray);
+            border: 4px solid var(--border-metal);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: inset 0 0 20px #000;
+        }
+        
+        header h1 { font-size: 2.5rem; letter-spacing: 2px; color: #fff; text-shadow: 2px 2px 0 #000; margin: 0; }
+        .sys-warning { color: var(--ind-red); animation: blink 1s infinite; font-size: 1.5rem; }
+
+        /* --- LAYOUT CENTRAL : CONSOLE DE COMMANDE --- */
+        .control-room {
+            display: flex;
+            flex-grow: 1;
+            margin-top: 10px;
+            gap: 15px;
+        }
+
+        /* Colonnes latérales (Systèmes secondaires) */
+        .side-rack {
+            flex: 1;
+            background: #0d0d0d;
+            border: 3px solid var(--border-metal);
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        .side-rack h2 {
+            font-size: 1.2rem; text-align: center; border-bottom: 2px solid var(--border-metal);
+            padding-bottom: 5px; margin-bottom: 10px; color: #888;
+        }
+
+        /* Module Secondaire */
+        .aux-module {
+            background: #000;
+            border: 2px solid #333;
+            padding: 10px;
+            position: relative;
+        }
+        .aux-module.danger { border-color: var(--ind-red); box-shadow: inset 0 0 15px rgba(217,0,0,0.5); }
+        .aux-title { font-size: 1rem; color: #fff; margin-bottom: 5px; display: flex; justify-content: space-between;}
+        .aux-stat { font-family: 'Courier New', monospace; font-size: 0.9rem; color: #aaa; }
+        .aux-val { font-weight: bold; color: var(--ind-orange); font-size: 1.2rem; }
+        .aux-val.crit { color: var(--ind-red); animation: text-shake 0.2s infinite; }
+
+        /* --- LE CŒUR DU RÉACTEUR (MILIEU) --- */
+        .main-core-section {
+            flex: 2;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+            border: 5px solid var(--border-metal);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: inset 0 0 50px #000;
+        }
+
+        .core-title {
+            position: absolute; top: 15px; text-align: center;
+            font-size: 2rem; color: #fff; letter-spacing: 5px;
+        }
+
+        /* Le Canvas du plasma entouré d'une structure lourde */
+        .core-housing {
+            width: 350px; height: 350px;
+            border-radius: 50%;
+            border: 15px solid #222;
+            box-shadow: 0 0 30px var(--ind-orange), inset 0 0 20px #000;
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+        
+        canvas#plasmaCore { width: 100%; height: 100%; }
+
+        /* Données superposées au cœur */
+        .core-data {
+            position: absolute; bottom: 20px;
+            display: flex; gap: 40px;
+            background: rgba(0,0,0,0.8); padding: 10px 20px; border: 1px solid var(--ind-orange);
+        }
+        .core-data div { text-align: center; }
+        .core-data span { display: block; font-family: 'Courier New'; font-size: 0.8rem; color: #888; }
+        .core-data strong { font-size: 2rem; color: var(--ind-yellow); }
+
+        /* Bouton d'urgence (SCRAM) */
+        .scram-btn {
+            position: absolute; bottom: 100px; right: 20px;
+            background: var(--ind-red); border: 4px solid #660000;
+            color: #fff; width: 120px; height: 120px; border-radius: 50%;
+            font-size: 1.5rem; font-weight: bold; cursor: not-allowed;
+            box-shadow: 0 10px 0 #660000, 0 15px 20px rgba(0,0,0,0.8);
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes text-shake { 
+            0% { transform: translateX(0); } 
+            25% { transform: translateX(-2px); } 
+            75% { transform: translateX(2px); } 
+            100% { transform: translateX(0); } 
+        }
+
+        /* Scrollbar brute */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #000; border-left: 2px solid #333; }
+        ::-webkit-scrollbar-thumb { background: #555; border: 1px solid #000; }
+    </style>
+</head>
+<body>
+
+    <div class="danger-tape"></div>
+    <header>
+        <h1>Z5 // CONTRÔLE ÉNERGIE LOURDE</h1>
+        <div class="sys-warning">⚠ SURVEILLANCE THERMIQUE REQUISE</div>
+    </header>
+    <div class="danger-tape"></div>
+
+    <div class="control-room">
+        <!-- Rack Gauche : Stockage & Auxiliaire -->
+        <div class="side-rack" id="left-rack">
+            <h2>SYSTÈMES AUXILIAIRES</h2>
+            <!-- Rempli par le JS -->
+        </div>
+
+        <!-- Centre : Le Réacteur Principal -->
+        <div class="main-core-section">
+            <div class="core-title" id="core-name">RX-01 FUSION MAIN</div>
+            
+            <div class="core-housing">
+                <canvas id="plasmaCore"></canvas>
+            </div>
+
+            <div class="core-data">
+                <div><span>PUISSANCE (MW)</span><strong id="core-power" class="dyn-val" data-base="0">0</strong></div>
+                <div><span>TEMPÉRATURE (°C)</span><strong id="core-temp" class="dyn-val" data-base="0">0</strong></div>
+            </div>
+
+            <div class="scram-btn">PURGE<br>URGENCE</div>
+        </div>
+
+        <!-- Rack Droit : Systèmes Critiques (FTL, etc) -->
+        <div class="side-rack" id="right-rack">
+            <h2>CHARGES HAUTE-TENSION</h2>
+            <!-- Rempli par le JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- CHARGEMENT DU CSV ---
+        fetch('energytech_data.csv')
+            .then(res => res.text())
+            .then(csv => {
+                const lines = csv.split('\n').filter(l => l.trim().length > 0);
+                const leftRack = document.getElementById('left-rack');
+                const rightRack = document.getElementById('right-rack');
+
+                for (let i = 1; i < lines.length; i++) {
+                    const data = lines[i].split(',');
+                    if (data.length >= 7) {
+                        const id = data[0].trim();
+                        const type = data[1].trim();
+                        const status = data[2].trim();
+                        const power = data[3].trim();
+                        const temp = data[4].trim();
+                        const int = data[5].trim();
+                        const cool = data[6].trim();
+
+                        // Le RX-01 va au milieu (Cœur principal)
+                        if (id === 'RX-01') {
+                            document.getElementById('core-power').setAttribute('data-base', power);
+                            document.getElementById('core-power').innerText = power;
+                            document.getElementById('core-temp').setAttribute('data-base', temp);
+                            document.getElementById('core-temp').innerText = temp;
+                            continue; 
+                        }
+
+                        // Détection Danger
+                        const isDanger = status.toLowerCase().includes('surchauffe') || status.toLowerCase().includes('critique');
+                        const dangerClass = isDanger ? 'danger' : '';
+                        const textCrit = isDanger ? 'crit' : '';
+
+                        // Formatage du module secondaire
+                        const html = `
+                            <div class="aux-module ${dangerClass}">
+                                <div class="aux-title"><span>${id}</span> <span style="font-size:0.8rem; color:#888;">${status}</span></div>
+                                <div class="aux-stat" style="color:#fff;">${type}</div>
+                                <div class="aux-stat" style="margin-top:5px;">Sortie: <span class="aux-val dyn-val" data-base="${power}">${power}</span> MW</div>
+                                <div class="aux-stat">Chaleur: <span class="aux-val ${textCrit} dyn-val" data-base="${temp}">${temp}</span> °C</div>
+                                <div class="aux-stat">Intégrité: ${int} | Refr: ${cool}</div>
+                            </div>
+                        `;
+
+                        // Répartition : FTL et Boucliers à droite, Antimatière et Batteries à gauche
+                        if (id.includes('THR') || id.includes('RX-03')) {
+                            rightRack.innerHTML += html;
+                        } else {
+                            leftRack.innerHTML += html;
+                        }
+                    }
+                }
+                startLiveSimulation();
+                initPlasmaCanvas();
+            });
+
+        // --- SIMULATION THERMIQUE ---
+        function startLiveSimulation() {
+            setInterval(() => {
+                document.querySelectorAll('.dyn-val').forEach(el => {
+                    let base = parseFloat(el.getAttribute('data-base'));
+                    if (base > 0 && base < 100000) {
+                        // Variation violente pour l'industriel (+/- 5%)
+                        let variation = Math.floor((Math.random() - 0.5) * (base * 0.1));
+                        el.innerText = base + variation;
+                    }
+                });
+            }, 800);
+        }
+
+        // --- CANVAS : PARTICULES DE PLASMA DU CŒUR ---
+        // Une animation beaucoup plus agressive (des centaines de particules projetées du centre)
+        function initPlasmaCanvas() {
+            const canvas = document.getElementById('plasmaCore');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            let particles = [];
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+                reset() {
+                    this.x = cx;
+                    this.y = cy;
+                    // Explosion vers l'extérieur
+                    this.angle = Math.random() * Math.PI * 2;
+                    this.speed = Math.random() * 5 + 2;
+                    this.radius = Math.random() * 4 + 1;
+                    // Couleurs du plasma (Jaune, Orange, Blanc)
+                    const colors = ['#ffffff', '#ffcc00', '#ff6600'];
+                    this.color = colors[Math.floor(Math.random() * colors.length)];
+                    this.life = Math.random() * 30 + 10; // Durée de vie avant disparition
+                }
+                update() {
+                    this.x += Math.cos(this.angle) * this.speed;
+                    this.y += Math.sin(this.angle) * this.speed;
+                    this.life--;
+                    if (this.life <= 0 || this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) {
+                        this.reset();
+                    }
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = this.color;
+                    ctx.fill();
+                }
+            }
+
+            for (let i = 0; i < 200; i++) {
+                particles.push(new Particle());
+            }
+
+            function draw() {
+                // Fond noir semi-transparent pour l'effet de traînée
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Dessin du noyau brillant
+                ctx.beginPath();
+                ctx.arc(cx, cy, 30 + Math.random()*10, 0, Math.PI*2);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowBlur = 50;
+                ctx.shadowColor = '#ff5e00';
+                ctx.fill();
+
+                // Particules
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+    </script>
+</body>
+</html>

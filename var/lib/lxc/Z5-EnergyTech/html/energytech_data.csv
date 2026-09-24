@@ -1,0 +1,7 @@
+ID_Unite,Type_Generateur,Statut,Puissance_MW,Temp_C,Integrite_Core,Refroidissement
+RX-01,Fusion Magnétique (Primaire),NOMINAL,8500,4250,98%,Stable (Cryo-Fluide)
+RX-02,Antimatière (Auxiliaire),VEILLE,150,320,100%,En cycle
+BAT-A,Matrice Stockage Quantique,EN CHARGE,1250,85,99%,Passif
+THR-01,Moteur de Saut FTL (Plasma),SURCHAUFFE,14200,8950,58%,CRITIQUE (Fuite)
+SOL-01,Capteurs Photoniques,HORS-LIGNE,0,-215,88%,N/A
+RX-03,Générateur de Bouclier,ACTIF,3400,2100,92%,Stable (Azote)
