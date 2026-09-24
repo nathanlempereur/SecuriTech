@@ -1,0 +1,6 @@
+ID_Secteur,Type_Culture,Humidite,Temperature,Luminosite,Ouvriers_Automates,Statut
+SER-A1,Blé Haute Densité,65%,22.5°C,Optimale,Actifs,Croissance
+HYD-B2,Légumes Racines,82%,24.0°C,Moyenne,Actifs,Récolte Imminente
+VER-G3,Vergers (Pommes / Compote),70%,19.5°C,Optimale,En charge,Maturation
+SIL-01,Silos de Stockage,40%,15.0°C,Faible,Veille,Sécurisé
+COM-02,Cuves de Compostage,90%,35.0°C,Nulle,Actifs,Traitement

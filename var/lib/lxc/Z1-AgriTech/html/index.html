@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Securitech | Z1-AgriTech</title>
+    <style>
+        :root {
+            --bg-color: #030e06;
+            --panel-bg: rgba(5, 25, 10, 0.85);
+            --agri-green: #2ecc71;
+            --agri-bright: #00ff66;
+            --alert-red: #ff3333;
+            --text-main: #e8f5e9;
+            --border-glow: 0 0 15px rgba(0, 255, 102, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(rgba(0, 255, 102, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 102, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            width: 100%;
+            max-width: 1200px;
+            border-bottom: 2px solid var(--agri-green);
+            padding-bottom: 1rem;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.8rem;
+            color: var(--agri-bright);
+            text-shadow: 0 0 20px var(--agri-bright);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            color: var(--agri-green);
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-top: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: var(--panel-bg);
+            border: 1px solid var(--agri-green);
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 4px;
+            box-shadow: var(--border-glow);
+        }
+
+        .stat-box h3 {
+            color: #81c784;
+            font-size: 1rem;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-box .value {
+            font-size: 2.2rem;
+            color: var(--agri-bright);
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--agri-green);
+            box-shadow: var(--border-glow);
+            padding: 1.5rem;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .panel h2 {
+            font-size: 1.2rem;
+            color: var(--agri-bright);
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            border-left: 4px solid var(--agri-bright);
+            padding-left: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            color: #a5d6a7;
+            padding: 1rem;
+            border-bottom: 2px solid rgba(46, 204, 113, 0.5);
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(46, 204, 113, 0.2);
+            font-size: 0.95rem;
+        }
+
+        tr:hover td {
+            background: rgba(0, 255, 102, 0.05);
+        }
+
+        .status-ok { color: var(--agri-bright); font-weight: bold; }
+        .status-warn { color: #f39c12; font-weight: bold; }
+        .status-danger { color: var(--alert-red); font-weight: bold; animation: blink 2s infinite; }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Z1-AgriTech</h1>
+        <p>CONTRÔLE ATMOSPHÉRIQUE & PRODUCTION BOTANIQUE</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-box">
+            <h3>Réserves d'Eau (Silos)</h3>
+            <div class="value">87%</div>
+        </div>
+        <div class="stat-box">
+            <h3>Niveau O2 Généré</h3>
+            <div class="value">Normal</div>
+        </div>
+        <div class="stat-box">
+            <h3>Biomasse Actuelle</h3>
+            <div class="value">42.5 T</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>> Analyse des Secteurs de Culture</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Secteur</th>
+                    <th>Type de Culture</th>
+                    <th>Humidité</th>
+                    <th>Température</th>
+                    <th>Luminosité</th>
+                    <th>Automates</th>
+                    <th>Statut de Cycle</th>
+                </tr>
+            </thead>
+            <tbody id="agri-table-body">
+                <tr><td colspan="7" style="text-align:center;">Relevé des capteurs environnementaux en cours...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function getStatusClass(status, temp) {
+            const s = status.toLowerCase();
+            const t = parseFloat(temp);
+            if (s.includes('alerte') || t > 30 && !s.includes('compostage')) return 'status-danger';
+            if (s.includes('attente') || s.includes('veille')) return 'status-warn';
+            return 'status-ok';
+        }
+
+        fetch('agritech_data.csv')
+            .then(response => {
+                if (!response.ok) throw new Error("Capteurs hors-ligne (Fichier introuvable).");
+                return response.text();
+            })
+            .then(data => {
+                const rows = data.split('\n').filter(row => row.trim() !== '');
+                const tbody = document.getElementById('agri-table-body');
+                tbody.innerHTML = ''; 
+
+                for (let i = 1; i < rows.length; i++) {
+                    const columns = rows[i].split(',');
+                    
+                    if (columns.length === 7) {
+                        const tr = document.createElement('tr');
+                        
+                        columns.forEach((col, index) => {
+                            const td = document.createElement('td');
+                            td.textContent = col.trim();
+                            
+                            // Colorisation dynamique basée sur le statut (col 6) et la température (col 3)
+                            if (index === 6) {
+                                td.className = getStatusClass(col.trim(), columns[3]);
+                            }
+                            tr.appendChild(td);
+                        });
+                        
+                        tbody.appendChild(tr);
+                    }
+                }
+            })
+            .catch(error => {
+                document.getElementById('agri-table-body').innerHTML = `<tr><td colspan="7" style="color:#ff3333; text-align:center;">Défaut Sonde : ${error.message}</td></tr>`;
+            });
+    </script>
+</body>
+</html>
