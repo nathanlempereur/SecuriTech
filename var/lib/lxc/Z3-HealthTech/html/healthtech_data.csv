@@ -1,0 +1,7 @@
+ID_Lit,Patient,Statut,BPM,SpO2,Temp,Tension,Traitement,Nanobots,Gravite
+LIT-01,Sujet-89,CRITIQUE,145,88,39.8,16/10,Isolement Pathogène Extra-terrestre,Actifs (94%),5
+LIT-02,Cmdr. Kaelen,STABLE,65,99,37.1,12/8,Purge Toxique Standard,Veille (10%),1
+LIT-03,Tech-Op Vex,SOINS INTENSIFS,110,94,38.5,14/9,Régénération Tissulaire (Brûlure Plasma),Actifs (60%),3
+LIT-04,Navigatrice Orion,OBSERVATION,78,98,37.4,13/8,Décontamination Rayonnement Cosmique,Déploiement (30%),2
+LIT-05,VIDE,EN ATTENTE,0,0,0.0,0/0,Aucun,Désactivés,0
+LIT-06,Spécialiste Nyx,COMA INDUIT,45,96,35.2,10/6,Stase Neuro-Traumatique,Maintien (50%),4

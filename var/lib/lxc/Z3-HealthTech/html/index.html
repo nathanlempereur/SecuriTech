@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z3-HealthTech | Terminal Médical Principal</title>
+    <style>
+        :root {
+            --bg-base: #050101;
+            --panel-bg: rgba(20, 3, 3, 0.85);
+            --border-main: #ff003c;
+            --border-dim: #550014;
+            --text-main: #ffcccc;
+            --text-bright: #ffffff;
+            --cyan-med: #00f0ff;
+            --alert-red: #ff0000;
+            --neon-glow: 0 0 10px rgba(255, 0, 60, 0.5);
+            --grid-line: rgba(255, 0, 60, 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 30px 30px;
+            color: var(--text-main);
+            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* En-tête globale */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid var(--border-main);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px -10px var(--border-main);
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .cross { font-size: 3rem; color: var(--border-main); text-shadow: var(--neon-glow); animation: heartbeat-logo 2s infinite; }
+        .title h1 { color: var(--text-bright); font-size: 2.2rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; }
+        .title p { color: var(--border-main); font-size: 0.9rem; font-weight: bold; letter-spacing: 2px; }
+        
+        .global-stats { display: flex; gap: 20px; text-align: right; }
+        .stat-item { background: rgba(255, 0, 60, 0.1); padding: 10px 15px; border-left: 3px solid var(--border-main); }
+        .stat-item span { display: block; font-size: 0.7rem; color: #ff9999; text-transform: uppercase; }
+        .stat-item strong { font-size: 1.2rem; color: var(--text-bright); }
+
+        /* Layout principal */
+        .main-container {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+
+        /* Grille des patients */
+        .patients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        /* Pod individuel */
+        .pod-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-dim);
+            border-top: 3px solid var(--border-main);
+            position: relative;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .pod-card:hover { border-color: var(--border-main); box-shadow: var(--neon-glow); }
+        
+        .pod-header { display: flex; justify-content: space-between; border-bottom: 1px solid var(--border-dim); padding-bottom: 5px; }
+        .pod-id { color: var(--cyan-med); font-weight: bold; font-size: 1.1rem; }
+        .pod-status { font-size: 0.8rem; padding: 2px 8px; background: #330000; border: 1px solid var(--border-main); border-radius: 12px; }
+
+        .patient-name { font-size: 1.5rem; color: var(--text-bright); text-transform: uppercase; font-weight: bold; }
+        
+        .vitals-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+        .vital-box { background: rgba(0,0,0,0.5); padding: 8px; border: 1px solid var(--border-dim); text-align: center; }
+        .vital-label { font-size: 0.65rem; color: #aaa; text-transform: uppercase; display: block; margin-bottom: 3px; }
+        .vital-value { font-size: 1.4rem; color: var(--text-bright); font-weight: bold; }
+        .vital-value.bpm { color: var(--cyan-med); text-shadow: 0 0 5px var(--cyan-med); }
+        .vital-value.oxy { color: #00ff66; }
+
+        /* Conteneur Canvas ECG */
+        .ecg-container {
+            width: 100%;
+            height: 60px;
+            background: #000;
+            border: 1px solid var(--border-dim);
+            position: relative;
+            margin: 5px 0;
+            overflow: hidden;
+        }
+        
+        canvas.ecg-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .treatment-info { font-size: 0.8rem; border-left: 2px solid var(--cyan-med); padding-left: 10px; margin-top: auto; }
+
+        /* États d'urgence */
+        .pod-card.critical { 
+            border-color: var(--alert-red); 
+            animation: pulse-red 1s infinite alternate; 
+        }
+        .pod-card.critical .pod-status { background: var(--alert-red); color: white; }
+        .pod-card.critical .vital-value.bpm { color: var(--alert-red); text-shadow: 0 0 10px var(--alert-red); }
+        .pod-card.empty { opacity: 0.5; filter: grayscale(100%); }
+
+        /* Barre latérale (Logs & Analyse) */
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        
+        .side-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-dim);
+            padding: 15px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .side-panel h3 { color: var(--border-main); font-size: 1rem; margin-bottom: 10px; border-bottom: 1px solid var(--border-dim); padding-bottom: 5px; }
+        
+        .terminal {
+            background: #000; border: 1px inset var(--border-dim);
+            padding: 10px; font-size: 0.75rem; color: #ff9999;
+            flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;
+        }
+        .log-entry { border-left: 2px solid var(--border-dim); padding-left: 5px; }
+        .log-time { color: var(--cyan-med); }
+        .log-warn { color: #ffcc00; }
+        .log-err { color: var(--alert-red); font-weight: bold; }
+
+        @keyframes heartbeat-logo { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 5px rgba(255,0,0,0.2); } 100% { box-shadow: inset 0 0 20px rgba(255,0,0,0.3), 0 0 15px rgba(255,0,0,0.6); } }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--border-dim); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--border-main); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="cross">✚</div>
+            <div class="title">
+                <h1>Z3-HealthTech</h1>
+                <p>UNITÉ DE SOINS INTENSIFS & BIOGÉNÉTIQUE</p>
+            </div>
+        </div>
+        <div class="global-stats">
+            <div class="stat-item"><span>Stérilisation Air</span><strong>99.98 %</strong></div>
+            <div class="stat-item"><span>Stock Med-Gel</span><strong>82.4 %</strong></div>
+            <div class="stat-item"><span>État Confinement</span><strong style="color:#00ff66;">SÉCURISÉ</strong></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="patients-grid" id="pods-container">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 50px;">
+                <h2 style="color: var(--cyan-med);">DÉCRYPTAGE DES TRANSMISSIONS BIOMÉTRIQUES...</h2>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <div class="side-panel" style="flex-grow: 0;">
+                <h3>SCANNER NANOBOTIQ</h3>
+                <div style="font-size: 0.8rem; line-height: 1.5;">
+                    Réseau interne : <span style="color:#00ff66;">CONNECTÉ</span><br>
+                    Charge processeur med : 47%<br>
+                    Synthèse protéines : ACTIVE
+                </div>
+            </div>
+            
+            <div class="side-panel">
+                <h3>TERMINAL DES ÉVÉNEMENTS</h3>
+                <div class="terminal" id="medical-logs"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CLASSE DE RENDU ECG EN TEMPS RÉEL SUR CANVAS ---
+        class ECGMonitor {
+            constructor(canvasId, bpmElementId, color) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.bpmElement = document.getElementById(bpmElementId);
+                this.color = color;
+                
+                // Ajuster la résolution interne du canvas pour la netteté
+                this.canvas.width = this.canvas.clientWidth;
+                this.canvas.height = this.canvas.clientHeight;
+
+                this.x = 0;
+                this.y = this.canvas.height / 2;
+                
+                // Tracé d'un pic QRS typique (Onde P, Pic QRS, Onde T)
+                this.qrsPattern = [
+                    -2, -3, -1, 0, 2,  // Onde P
+                    5, 20, -35, 10, 2, // Complexe QRS (le grand pic)
+                    0, -2, -4, -2, 0   // Onde T
+                ];
+                
+                this.speed = 2; // Vitesse de balayage
+                this.lastBeatTime = Date.now();
+                this.isDrawingBeat = false;
+                this.beatIndex = 0;
+
+                this.drawLoop = this.drawLoop.bind(this);
+                requestAnimationFrame(this.drawLoop);
+            }
+
+            drawLoop() {
+                // Créer l'effet de traînée "phosphorescente" en ne peignant pas complètement en noir
+                this.ctx.fillStyle = 'rgba(5, 1, 1, 0.1)';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                let currentBPM = parseInt(this.bpmElement.innerText) || 0;
+                let beatInterval = currentBPM > 0 ? (60 / currentBPM) * 1000 : Infinity;
+                
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.x, this.y);
+
+                this.x += this.speed;
+
+                // Si on arrive au bout de l'écran, on recommence à gauche
+                if (this.x >= this.canvas.width) {
+                    this.x = 0;
+                    // Dessine une barre noire propre pour effacer l'ancienne ligne devant le curseur
+                    this.ctx.fillStyle = '#000';
+                    this.ctx.fillRect(this.x, 0, 10, this.canvas.height);
+                }
+
+                // Déclencher un battement si le délai est écoulé
+                if (currentBPM > 0 && !this.isDrawingBeat && (Date.now() - this.lastBeatTime) > beatInterval) {
+                    this.isDrawingBeat = true;
+                    this.beatIndex = 0;
+                    this.lastBeatTime = Date.now();
+                }
+
+                let targetY = this.canvas.height / 2;
+
+                // Dessiner le pic QRS
+                if (this.isDrawingBeat) {
+                    targetY += this.qrsPattern[this.beatIndex];
+                    this.beatIndex++;
+                    if (this.beatIndex >= this.qrsPattern.length) {
+                        this.isDrawingBeat = false;
+                    }
+                } else if (currentBPM > 0) {
+                    // Léger bruit de fond pour un effet de capteur organique
+                    targetY += (Math.random() - 0.5) * 2;
+                } // Si BPM = 0, on garde la ligne parfaitement droite au centre
+
+                this.y = targetY;
+                
+                // Style de la ligne
+                this.ctx.lineTo(this.x, this.y);
+                this.ctx.strokeStyle = this.color;
+                this.ctx.lineWidth = 1.5;
+                this.ctx.shadowBlur = 4;
+                this.ctx.shadowColor = this.color;
+                this.ctx.stroke();
+
+                requestAnimationFrame(this.drawLoop);
+            }
+        }
+
+        // --- GÉNÉRATION DU HTML ---
+        function buildPodHTML(patient) {
+            const isEmpty = patient.patient.toLowerCase() === 'vide';
+            const isCritical = parseInt(patient.gravite) >= 4 || patient.statut.toLowerCase() === 'critique';
+            
+            let classes = 'pod-card';
+            if (isEmpty) classes += ' empty';
+            if (isCritical) classes += ' critical';
+
+            const bpmDisplay = isEmpty ? '00' : `<span class="dyn-bpm" id="bpm-${patient.id}" data-base="${patient.bpm}">${patient.bpm}</span>`;
+            const spo2Display = isEmpty ? '00' : `<span class="dyn-spo2" data-base="${patient.spo2}">${patient.spo2}</span>`;
+            const tempDisplay = isEmpty ? '00.0' : `<span class="dyn-temp" data-base="${patient.temp}">${patient.temp}</span>`;
+
+            return `
+                <div class="${classes}">
+                    <div class="pod-header">
+                        <span class="pod-id">${patient.id}</span>
+                        <span class="pod-status">${patient.statut}</span>
+                    </div>
+                    <div class="patient-name">${patient.patient}</div>
+                    
+                    <div class="ecg-container">
+                        <canvas class="ecg-canvas" id="canvas-${patient.id}"></canvas>
+                    </div>
+
+                    <div class="vitals-grid">
+                        <div class="vital-box">
+                            <span class="vital-label">Rythme Cardiaque</span>
+                            <span class="vital-value bpm">${bpmDisplay}</span>
+                        </div>
+                        <div class="vital-box">
+                            <span class="vital-label">Saturation O2</span>
+                            <span class="vital-value oxy">${spo2Display}</span>
+                        </div>
+                        <div class="vital-box">
+                            <span class="vital-label">Température</span>
+                            <span class="vital-value">${tempDisplay}</span>
+                        </div>
+                        <div class="vital-box">
+                            <span class="vital-label">Tension Art.</span>
+                            <span class="vital-value" style="color:#aaa;">${patient.tension}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="treatment-info">
+                        <strong>Protocole:</strong> ${patient.traitement}<br>
+                        <strong style="color:var(--cyan-med);">Nano-Réseau:</strong> ${patient.nanobots}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- CHARGEMENT DES DONNÉES ET INITIALISATION ---
+        fetch('healthtech_data.csv')
+            .then(res => {
+                if (!res.ok) throw new Error("Erreur de liaison réseau avec la baie médicale.");
+                return res.text();
+            })
+            .then(csv => {
+                const lines = csv.split('\n').filter(l => l.trim().length > 0);
+                const container = document.getElementById('pods-container');
+                container.innerHTML = ''; 
+
+                let patients = [];
+
+                for (let i = 1; i < lines.length; i++) {
+                    const data = lines[i].split(',');
+                    if (data.length >= 10) {
+                        const p = {
+                            id: data[0].trim(), patient: data[1].trim(), statut: data[2].trim(),
+                            bpm: data[3].trim(), spo2: data[4].trim(), temp: data[5].trim(),
+                            tension: data[6].trim(), traitement: data[7].trim(), 
+                            nanobots: data[8].trim(), gravite: data[9].trim()
+                        };
+                        patients.push(p);
+                        container.innerHTML += buildPodHTML(p);
+                    }
+                }
+
+                // Une fois le HTML injecté, on lance la simulation et on accroche un canvas ECG par patient
+                startLiveSimulation();
+                
+                patients.forEach(p => {
+                    const isEmpty = p.patient.toLowerCase() === 'vide';
+                    const isCritical = parseInt(p.gravite) >= 4 || p.statut.toLowerCase() === 'critique';
+                    
+                    // Couleur de l'ECG : Rouge si critique, Gris si vide, Cyan pour le reste
+                    const ecgColor = isEmpty ? '#333' : (isCritical ? '#ff003c' : '#00f0ff');
+                    
+                    // Initialiser le moteur graphique pour ce lit
+                    new ECGMonitor(`canvas-${p.id}`, `bpm-${p.id}`, ecgColor);
+                });
+            })
+            .catch(err => {
+                document.getElementById('pods-container').innerHTML = `<h2 style="color:var(--alert-red); padding:50px;">ERREUR FATALE : ${err.message}</h2>`;
+            });
+
+        // --- SIMULATION DES NOMBRES ---
+        function startLiveSimulation() {
+            setInterval(() => {
+                document.querySelectorAll('.dyn-bpm').forEach(el => {
+                    let base = parseInt(el.getAttribute('data-base'));
+                    let variation = Math.floor(Math.random() * 5) - 2; 
+                    el.innerText = base > 0 ? base + variation : 0;
+                });
+                document.querySelectorAll('.dyn-spo2').forEach(el => {
+                    let base = parseInt(el.getAttribute('data-base'));
+                    let variation = Math.floor(Math.random() * 3) - 1; 
+                    let current = base + variation;
+                    el.innerText = current > 100 ? 100 : current;
+                });
+                document.querySelectorAll('.dyn-temp').forEach(el => {
+                    let base = parseFloat(el.getAttribute('data-base'));
+                    let variation = (Math.random() * 0.2 - 0.1).toFixed(1); 
+                    el.innerText = base > 0 ? (base + parseFloat(variation)).toFixed(1) : "0.0";
+                });
+            }, 2000);
+        }
+
+        // --- TERMINAL DE LOGS ---
+        const terminal = document.getElementById('medical-logs');
+        const logEvents = [
+            "Ajustement du mélange O2/Azote dans la baie principale.",
+            "Analyse sanguine terminée pour le Cmdr. Kaelen.",
+            "<span class='log-warn'>Avertissement : Baisse de pression dans le circuit fluide 4.</span>",
+            "Cycle de stérilisation ultraviolet complété.",
+            "Nanobots médicaux ont terminé la phase de réparation tissulaire.",
+            "<span class='log-err'>ALERTE MINEURE : Pic cardiaque détecté [LIT-01]. Administration calmants.</span>",
+            "Mise à jour du dossier médical synchronisée avec le Serveur Central.",
+            "Diagnostic IA : Aucune mutation virale détectée sur les cycles récents."
+        ];
+
+        function addLog() {
+            const time = new Date().toLocaleTimeString('fr-FR');
+            const randomEvent = logEvents[Math.floor(Math.random() * logEvents.length)];
+            const div = document.createElement('div');
+            div.className = 'log-entry';
+            div.innerHTML = `<span class="log-time">[${time}]</span> - ${randomEvent}`;
+            terminal.appendChild(div);
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        addLog();
+        setInterval(addLog, Math.random() * 6000 + 4000);
+    </script>
+</body>
+</html>
