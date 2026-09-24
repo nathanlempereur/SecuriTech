@@ -1,0 +1,11 @@
+[Unit]
+Description=Initialisation du module Securitech
+After=network.target lxc.service
+
+[Service]
+Type=oneshot
+ExecStart=iptables-restore < /etc/iptables/rules.v4 && for el in $(lxc-ls);do lxc-start "$el";done
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
