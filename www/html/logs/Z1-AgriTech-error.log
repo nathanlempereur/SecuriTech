@@ -1,0 +1,45 @@
+[Tue Sep 22 14:11:05.473967 2026] [mpm_event:notice] [pid 1190:tid 1190] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Tue Sep 22 14:11:05.474277 2026] [core:notice] [pid 1190:tid 1190] AH00094: Command line: '/usr/sbin/apache2'
+[Tue Sep 22 14:56:52.835639 2026] [mpm_event:notice] [pid 1190:tid 1190] AH00492: caught SIGWINCH, shutting down gracefully
+[Wed Sep 23 07:56:40.201618 2026] [mpm_event:notice] [pid 174:tid 174] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Wed Sep 23 07:56:40.207575 2026] [core:notice] [pid 174:tid 174] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Sep 23 08:38:27.314504 2026] [mpm_event:notice] [pid 174:tid 174] AH00492: caught SIGWINCH, shutting down gracefully
+[Wed Sep 23 08:38:30.617913 2026] [mpm_event:notice] [pid 172:tid 172] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Wed Sep 23 08:38:30.619591 2026] [core:notice] [pid 172:tid 172] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Sep 23 09:43:37.713310 2026] [mpm_event:notice] [pid 172:tid 172] AH00492: caught SIGWINCH, shutting down gracefully
+[Wed Sep 23 09:45:10.422144 2026] [mpm_event:notice] [pid 173:tid 173] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Wed Sep 23 09:45:10.433467 2026] [core:notice] [pid 173:tid 173] AH00094: Command line: '/usr/sbin/apache2'
+[Wed Sep 23 14:56:28.939843 2026] [mpm_event:notice] [pid 173:tid 173] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 07:54:32.383463 2026] [mpm_event:notice] [pid 173:tid 173] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 07:54:32.385602 2026] [core:notice] [pid 173:tid 173] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 08:04:58.263062 2026] [mpm_event:notice] [pid 173:tid 173] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 08:06:45.372088 2026] [mpm_event:notice] [pid 177:tid 177] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 08:06:45.372495 2026] [core:notice] [pid 177:tid 177] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 08:20:09.259209 2026] [mpm_event:notice] [pid 177:tid 177] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 08:20:48.257835 2026] [mpm_event:notice] [pid 178:tid 178] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 08:20:48.258272 2026] [core:notice] [pid 178:tid 178] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 08:20:55.681306 2026] [mpm_event:notice] [pid 178:tid 178] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 08:22:02.768325 2026] [mpm_event:notice] [pid 178:tid 178] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 08:22:02.768656 2026] [core:notice] [pid 178:tid 178] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 08:23:33.752350 2026] [mpm_event:notice] [pid 178:tid 178] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 08:24:12.993625 2026] [mpm_event:notice] [pid 178:tid 178] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 08:24:12.993875 2026] [core:notice] [pid 178:tid 178] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 08:25:14.380597 2026] [mpm_event:notice] [pid 178:tid 178] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 08:28:39.493042 2026] [mpm_event:notice] [pid 178:tid 178] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 08:28:39.493381 2026] [core:notice] [pid 178:tid 178] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 08:28:46.013623 2026] [mpm_event:notice] [pid 178:tid 178] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 10:27:41.174853 2026] [mpm_event:notice] [pid 177:tid 177] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 10:27:41.177794 2026] [core:notice] [pid 177:tid 177] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 10:27:56.236376 2026] [mpm_event:notice] [pid 177:tid 177] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 10:28:18.291455 2026] [mpm_event:notice] [pid 177:tid 177] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 10:28:18.291836 2026] [core:notice] [pid 177:tid 177] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 10:29:02.550824 2026] [mpm_event:notice] [pid 177:tid 177] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 10:30:40.656754 2026] [mpm_event:notice] [pid 177:tid 177] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 10:30:40.657052 2026] [core:notice] [pid 177:tid 177] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 11:33:25.532481 2026] [mpm_event:notice] [pid 177:tid 177] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 11:37:00.421039 2026] [mpm_event:notice] [pid 177:tid 177] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 11:37:00.421349 2026] [core:notice] [pid 177:tid 177] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 11:48:35.933723 2026] [mpm_event:notice] [pid 177:tid 177] AH00492: caught SIGWINCH, shutting down gracefully
+[Thu Sep 24 11:50:25.119941 2026] [mpm_event:notice] [pid 177:tid 177] AH00489: Apache/2.4.68 (Debian) configured -- resuming normal operations
+[Thu Sep 24 11:50:25.124911 2026] [core:notice] [pid 177:tid 177] AH00094: Command line: '/usr/sbin/apache2'
+[Thu Sep 24 12:01:44.562227 2026] [mpm_event:notice] [pid 177:tid 177] AH00492: caught SIGWINCH, shutting down gracefully
