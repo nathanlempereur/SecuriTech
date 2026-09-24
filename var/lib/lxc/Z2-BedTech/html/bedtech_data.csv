@@ -1,0 +1,7 @@
+ID_Capsule,Occupant,Statut_Capsule,Cycle_Repos,Rythme_Cardiaque,Phase_Sommeil,Statut_Vital
+STASE-01,Nathan,En service,85,58,Profond,Optimal
+STASE-02,Elena,En service,42,65,Léger,Normal
+STASE-03,Thomas,En service,12,82,Paradoxal,Agité
+STASE-04,Zoe,Cycle de Nettoyage,0,0,N/A,Morte
+STASE-05,Vide,Disponible,0,0,N/A,En attente
+STASE-06,E.T,En service,100,45,Cryogénisation,Stase

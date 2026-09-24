@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Securitech | Z2-BedTech</title>
+    <style>
+        :root {
+            --bg-color: #01050a;
+            --panel-bg: rgba(5, 15, 30, 0.7);
+            --bed-blue: #00d2ff;
+            --bed-dark: #3a7bd5;
+            --alert-orange: #ff9900;
+            --text-main: #e0f7fa;
+            --border-glow: 0 0 20px rgba(0, 210, 255, 0.2);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 210, 255, 0.05) 0%, transparent 60%),
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 4px;
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            width: 100%;
+            max-width: 1200px;
+            border-bottom: 2px solid var(--bed-blue);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .header-title h1 {
+            font-size: 2.5rem;
+            color: var(--bed-blue);
+            text-shadow: 0 0 15px var(--bed-blue);
+            letter-spacing: 3px;
+        }
+
+        .header-title p {
+            color: var(--bed-dark);
+            font-weight: bold;
+            margin-top: 0.5rem;
+        }
+
+        .clock {
+            font-size: 1.5rem;
+            color: var(--bed-blue);
+            text-align: right;
+            text-shadow: 0 0 10px var(--bed-blue);
+        }
+
+        .env-stats {
+            display: flex;
+            gap: 1rem;
+            width: 100%;
+            max-width: 1200px;
+            margin-bottom: 2rem;
+        }
+
+        .env-card {
+            flex: 1;
+            background: linear-gradient(180deg, var(--panel-bg) 0%, rgba(1,5,10,0.9) 100%);
+            border: 1px solid var(--bed-dark);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: inset 0 0 15px rgba(0, 210, 255, 0.05);
+        }
+
+        .env-card h3 { font-size: 0.8rem; color: #81d4fa; text-transform: uppercase; margin-bottom: 5px; }
+        .env-card .val { font-size: 1.8rem; font-weight: bold; color: white; }
+
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--bed-blue);
+            box-shadow: var(--border-glow);
+            border-radius: 8px;
+            width: 100%;
+            max-width: 1200px;
+            overflow: hidden;
+            backdrop-filter: blur(5px);
+        }
+
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        
+        th {
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--bed-blue);
+            padding: 1.2rem 1rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 210, 255, 0.1);
+            vertical-align: middle;
+        }
+
+        tr:hover td { background: rgba(0, 210, 255, 0.05); }
+
+        /* --- Éléments avancés --- */
+        
+        /* Barre de progression du sommeil */
+        .progress-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--bed-dark), var(--bed-blue));
+            box-shadow: 0 0 10px var(--bed-blue);
+            transition: width 1s ease-in-out;
+        }
+        
+        .progress-text { font-size: 0.8rem; color: #b2ebf2; }
+
+        /* Animation du rythme cardiaque */
+        .bpm-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .heart {
+            color: #ff3366;
+            font-size: 1.2rem;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        .heart.agite { animation: heartbeat 0.8s infinite; color: var(--alert-orange); }
+        .heart.flat { animation: none; color: #555; }
+
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.2); }
+            40% { transform: scale(1); }
+            60% { transform: scale(1.1); }
+            80% { transform: scale(1); }
+            100% { transform: scale(1); }
+        }
+
+        .status-optimal { color: var(--bed-blue); font-weight: bold; }
+        .status-agite { color: var(--alert-orange); font-weight: bold; }
+        .status-offline { color: #555; font-style: italic; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-title">
+            <h1>Z2-BedTech</h1>
+            <p>MODULE HABITATION // SURVEILLANCE BIOMÉTRIQUE</p>
+        </div>
+        <div class="clock" id="ship-clock">00:00:00</div>
+    </div>
+
+    <div class="env-stats">
+        <div class="env-card">
+            <h3>Gravité Artificielle</h3>
+            <div class="val">1.0 G</div>
+        </div>
+        <div class="env-card">
+            <h3>Taux O2 Ambiant</h3>
+            <div class="val">21.5 %</div>
+        </div>
+        <div class="env-card">
+            <h3>Température Dortoirs</h3>
+            <div class="val">19.0 °C</div>
+        </div>
+        <div class="env-card">
+            <h3>Niveau Sonore</h3>
+            <div class="val">24 dB</div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <table>
+            <thead>
+                <tr>
+                    <th>Unité</th>
+                    <th>Occupant</th>
+                    <th>Statut Capsule</th>
+                    <th>Cycle de Repos</th>
+                    <th>BPM</th>
+                    <th>Phase</th>
+                    <th>État Vital</th>
+                </tr>
+            </thead>
+            <tbody id="bed-table-body">
+                <tr><td colspan="7" style="text-align:center;">Initialisation des capteurs de stase...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Horloge du vaisseau
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('ship-clock').textContent = now.toLocaleTimeString('fr-FR');
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Récupération et formatage des données
+        fetch('bedtech_data.csv')
+            .then(response => {
+                if (!response.ok) throw new Error("Impossible de lire les données de stase.");
+                return response.text();
+            })
+            .then(data => {
+                const rows = data.split('\n').filter(row => row.trim() !== '');
+                const tbody = document.getElementById('bed-table-body');
+                tbody.innerHTML = ''; 
+
+                for (let i = 1; i < rows.length; i++) {
+                    const cols = rows[i].split(',');
+                    
+                    if (cols.length === 7) {
+                        const tr = document.createElement('tr');
+                        
+                        // ID, Occupant, Statut
+                        tr.innerHTML += `<td><strong>${cols[0]}</strong></td>`;
+                        tr.innerHTML += `<td>${cols[1]}</td>`;
+                        tr.innerHTML += `<td>${cols[2]}</td>`;
+                        
+                        // Cycle de repos (Barre de progression visuelle)
+                        const cycle = parseInt(cols[3]) || 0;
+                        const cycleHTML = cols[3] === '0' && cols[2] !== 'En service' ? 
+                            `<span class="progress-text">Inactif</span>` :
+                            `<div class="progress-text">${cycle}% Accompli</div>
+                             <div class="progress-container">
+                                <div class="progress-bar" style="width: ${cycle}%;"></div>
+                             </div>`;
+                        tr.innerHTML += `<td>${cycleHTML}</td>`;
+
+                        // Rythme cardiaque (Animation dynamique)
+                        const bpm = parseInt(cols[4]) || 0;
+                        let heartClass = 'heart';
+                        if (bpm === 0) heartClass += ' flat';
+                        if (cols[6].trim().toLowerCase() === 'agité') heartClass += ' agite';
+                        
+                        const bpmDisplay = bpm > 0 ? `${bpm}` : '--';
+                        tr.innerHTML += `<td>
+                                            <div class="bpm-container">
+                                                <span class="${heartClass}">❤</span> 
+                                                <span>${bpmDisplay}</span>
+                                            </div>
+                                         </td>`;
+                        
+                        // Phase
+                        tr.innerHTML += `<td>${cols[5]}</td>`;
+                        
+                        // État Vital
+                        const etat = cols[6].trim().toLowerCase();
+                        let etatClass = 'status-optimal';
+                        if (etat === 'agité') etatClass = 'status-agite';
+                        if (etat.includes('ligne') || etat.includes('attente')) etatClass = 'status-offline';
+                        tr.innerHTML += `<td class="${etatClass}">${cols[6]}</td>`;
+
+                        tbody.appendChild(tr);
+                    }
+                }
+            })
+            .catch(error => {
+                document.getElementById('bed-table-body').innerHTML = `<tr><td colspan="7" style="color:#ff9900; text-align:center;">Défaut de liaison CSV : ${error.message}</td></tr>`;
+            });
+    </script>
+</body>
+</html>
