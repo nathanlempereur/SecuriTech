@@ -60,7 +60,7 @@ Le projet intègre un script d'audit (`monitoring.sh`) exécuté depuis le Serve
    Copiez les fichiers `index.html` et `*_data.csv` correspondants dans le dossier `/var/www/html/` de chaque conteneur.
 
 3. **Les dossier :** 
-   Mettre les dossier html dans `/var/www/html`, le .service dans votre dossier de service, les .bashrc dans votre dossier user (/root), et les autres dossier nommée en zone et le SecureTech à la racine `/`
+   Mettre les dossier var et etc dans leurs emplacement de base (a la racine juste ajouter les fichiers des répertoires) , le .service dans votre dossier de service, les .bashrc dans votre dossier user (/root), et les autres dossier nommée en zone et le SecureTech à la racine `/`
    
 ## 🌐 Routage et Réseau
 
