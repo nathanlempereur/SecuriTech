@@ -1,0 +1,7 @@
+ID_Terminal,Utilisateur,Rang,Tache_En_Cours,Bande_Passante,Statut_Liaison,Niveau_Securite
+TRM-01,Cmdr. Kaelen,Officier Supérieur,Synchronisation Nav-Data,850,ACTIF,Niveau-5 (Alpha)
+TRM-02,Tech-Op Vex,Ingénieur Réseau,Maintenance Pare-feu Quantique,1200,ACTIF,Niveau-4 (Beta)
+TRM-03,IA-Sub-Routine,Intelligence Artificielle,Analyse Télémétrique FTL,5500,PRIORITÉ MAX,Niveau-6 (Omega)
+TRM-04,Libre,-,En attente de connexion,0,VEILLE,-
+TRM-05,Spécialiste Nyx,Agent de Renseignement,Décryptage Signal Inconnu,420,INSTABLE,Niveau-4 (Beta)
+TRM-06,Opérateur Zael,Analyste,Mise à jour des logs de vol,150,ACTIF,Niveau-2 (Delta)

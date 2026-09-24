@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Z4-OpenSpaceTech | Hub de Communication</title>
+    <style>
+        :root {
+            --bg-base: #02020a;
+            --panel-bg: rgba(5, 10, 25, 0.85);
+            --neon-magenta: #ff0055;
+            --neon-cyan: #00f0ff;
+            --text-main: #e0eaff;
+            --border-dim: #1a234c;
+            --glow-magenta: 0 0 15px rgba(255, 0, 85, 0.4);
+            --glow-cyan: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(0, 240, 255, 0.05) 0%, transparent 60%),
+                linear-gradient(rgba(255, 0, 85, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 0, 85, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            color: var(--text-main);
+            font-family: 'Consolas', 'Courier New', monospace;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- HEADER --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid var(--neon-magenta);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 20px -10px var(--neon-magenta);
+        }
+
+        .logo-area { display: flex; align-items: center; gap: 15px; }
+        .node-icon { 
+            font-size: 2.5rem; color: var(--neon-cyan); 
+            text-shadow: var(--glow-cyan);
+            animation: spin 4s linear infinite; 
+        }
+        .title h1 { color: #fff; font-size: 2.2rem; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 5px; text-shadow: var(--glow-magenta); }
+        .title p { color: var(--neon-magenta); font-size: 0.9rem; font-weight: bold; letter-spacing: 3px; }
+        
+        .global-stats { display: flex; gap: 20px; text-align: right; }
+        .stat-item { background: rgba(0, 240, 255, 0.1); padding: 10px 15px; border-right: 3px solid var(--neon-cyan); }
+        .stat-item span { display: block; font-size: 0.7rem; color: #a0c0ff; text-transform: uppercase; }
+        .stat-item strong { font-size: 1.2rem; color: #fff; text-shadow: var(--glow-cyan); }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .main-container {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 20px;
+            height: calc(100vh - 120px);
+        }
+
+        /* --- TERMINAUX --- */
+        .terminals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .terminal-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-dim);
+            border-left: 4px solid var(--neon-cyan);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .terminal-card:hover { border-color: var(--neon-cyan); box-shadow: var(--glow-cyan); transform: translateX(5px); }
+        
+        .term-header { display: flex; justify-content: space-between; border-bottom: 1px dashed var(--border-dim); padding-bottom: 5px; }
+        .term-id { color: var(--neon-magenta); font-weight: bold; font-size: 1.1rem; }
+        .term-status { font-size: 0.75rem; padding: 2px 6px; background: rgba(0,0,0,0.5); border: 1px solid var(--neon-cyan); border-radius: 3px; color: var(--neon-cyan); }
+
+        .user-name { font-size: 1.3rem; color: #fff; font-weight: bold; }
+        .user-rank { font-size: 0.75rem; color: #88a; text-transform: uppercase; }
+
+        .task-box { background: rgba(0, 240, 255, 0.05); padding: 8px; border: 1px inset var(--border-dim); font-size: 0.85rem; margin-top: 5px; }
+        .task-box strong { color: var(--neon-cyan); }
+
+        .bandwidth-display { margin-top: auto; display: flex; justify-content: space-between; align-items: center; }
+        .bw-value { font-size: 1.5rem; font-weight: bold; color: #fff; }
+        
+        /* Barres de chargement dynamiques */
+        .data-bar-container { width: 100%; height: 4px; background: #111; margin-top: 5px; overflow: hidden; position: relative; }
+        .data-bar { height: 100%; background: var(--neon-cyan); box-shadow: var(--glow-cyan); width: 0%; transition: width 0.5s ease; }
+
+        /* États Spéciaux */
+        .terminal-card.empty { border-left-color: #333; opacity: 0.6; filter: grayscale(80%); }
+        .terminal-card.empty .term-status { border-color: #555; color: #777; }
+        .terminal-card.unstable { border-left-color: var(--neon-magenta); animation: glitch 0.5s infinite alternate; }
+        .terminal-card.unstable .data-bar { background: var(--neon-magenta); box-shadow: var(--glow-magenta); }
+        .terminal-card.unstable .term-status { color: var(--neon-magenta); border-color: var(--neon-magenta); }
+
+        /* --- SIDEBAR --- */
+        .sidebar { display: flex; flex-direction: column; gap: 15px; }
+        
+        .side-panel { background: var(--panel-bg); border: 1px solid var(--border-dim); padding: 15px; display: flex; flex-direction: column; }
+        .side-panel h3 { color: var(--neon-magenta); font-size: 1rem; margin-bottom: 10px; border-bottom: 1px solid var(--border-dim); padding-bottom: 5px; text-shadow: var(--glow-magenta); }
+
+        /* Graphique Réseau */
+        .net-graph-container { width: 100%; height: 120px; background: #000; border: 1px solid var(--border-dim); position: relative; }
+        canvas#networkCanvas { width: 100%; height: 100%; display: block; }
+
+        /* Console de décryptage */
+        .comms-log {
+            background: #000; border: 1px solid var(--border-dim);
+            padding: 10px; font-size: 0.75rem; color: #88a;
+            flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;
+        }
+        .log-line { font-family: 'Courier New', monospace; word-break: break-all; }
+        .log-highlight { color: var(--neon-cyan); font-weight: bold; }
+        .log-alert { color: var(--neon-magenta); font-weight: bold; }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes glitch { 
+            0% { transform: translate(0) } 
+            20% { transform: translate(-2px, 1px) } 
+            40% { transform: translate(1px, -1px) } 
+            60% { transform: translate(0) } 
+            100% { transform: translate(0) } 
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--border-dim); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--neon-cyan); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area">
+            <div class="node-icon">⎈</div>
+            <div class="title">
+                <h1>Z4-OpenSpaceTech</h1>
+                <p>HUB CENTRAL DE COMMUNICATION & TÉLÉMÉTRIE</p>
+            </div>
+        </div>
+        <div class="global-stats">
+            <div class="stat-item"><span>Liaison Sub-Spatiale</span><strong style="color:var(--neon-cyan);">CONNECTÉ</strong></div>
+            <div class="stat-item"><span>Ping Terre</span><strong>4.2 ms</strong></div>
+            <div class="stat-item"><span>Cryptage FTL</span><strong style="color:var(--neon-magenta);">ACTIF (256-Q)</strong></div>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <!-- Grille des terminaux générée par JS -->
+        <div class="terminals-grid" id="terminals-container">
+            <div style="grid-column: 1 / -1; text-align: center; padding: 50px;">
+                <h2 style="color: var(--neon-cyan);">RECHERCHE DES NŒUDS DE COMMUNICATION...</h2>
+            </div>
+        </div>
+
+        <div class="sidebar">
+            <!-- Radar réseau Canvas -->
+            <div class="side-panel" style="flex: 0 0 180px;">
+                <h3>FLUX DE DONNÉES GLOBAL</h3>
+                <div class="net-graph-container">
+                    <canvas id="networkCanvas"></canvas>
+                </div>
+            </div>
+            
+            <!-- Logs type Matrix / Décryptage -->
+            <div class="side-panel" style="flex-grow: 1;">
+                <h3>INTERCEPTEUR DE SIGNAUX</h3>
+                <div class="comms-log" id="comms-log"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CHARGEMENT DU CSV ET GÉNÉRATION HTML ---
+        fetch('openspacetech_data.csv')
+            .then(res => {
+                if (!res.ok) throw new Error("Erreur de liaison réseau avec les serveurs Z4.");
+                return res.text();
+            })
+            .then(csv => {
+                const lines = csv.split('\n').filter(l => l.trim().length > 0);
+                const container = document.getElementById('terminals-container');
+                container.innerHTML = ''; 
+
+                for (let i = 1; i < lines.length; i++) {
+                    const data = lines[i].split(',');
+                    if (data.length >= 7) {
+                        const t = {
+                            id: data[0].trim(), user: data[1].trim(), rank: data[2].trim(),
+                            task: data[3].trim(), bw: data[4].trim(), status: data[5].trim(),
+                            security: data[6].trim()
+                        };
+                        
+                        const isEmpty = t.user.toLowerCase() === 'libre';
+                        const isUnstable = t.status.toLowerCase() === 'instable';
+                        
+                        let classes = 'terminal-card';
+                        if (isEmpty) classes += ' empty';
+                        if (isUnstable) classes += ' unstable';
+
+                        const bwDisplay = isEmpty ? '0' : `<span class="dyn-bw" data-base="${t.bw}">${t.bw}</span>`;
+
+                        const html = `
+                            <div class="${classes}">
+                                <div class="term-header">
+                                    <span class="term-id">${t.id}</span>
+                                    <span class="term-status">${t.status}</span>
+                                </div>
+                                <div>
+                                    <div class="user-name">${t.user}</div>
+                                    <div class="user-rank">Accès: ${t.security} | ${t.rank}</div>
+                                </div>
+                                <div class="task-box">
+                                    <strong>Opération :</strong><br>${t.task}
+                                </div>
+                                <div class="bandwidth-display">
+                                    <span style="font-size:0.7rem; color:#88a;">Bande Passante</span>
+                                    <div class="bw-value">${bwDisplay} <span style="font-size:0.8rem; color:var(--neon-cyan);">MB/s</span></div>
+                                </div>
+                                <div class="data-bar-container">
+                                    <div class="data-bar dyn-bar" data-base="${t.bw}"></div>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += html;
+                    }
+                }
+                startLiveSimulation();
+                initNetworkCanvas();
+            })
+            .catch(err => {
+                document.getElementById('terminals-container').innerHTML = `<h2 style="color:var(--neon-magenta); padding:50px;">ERREUR : ${err.message}</h2>`;
+            });
+
+        // --- SIMULATION DES DONNÉES (JavaScript) ---
+        function startLiveSimulation() {
+            // Fluctuation de la bande passante et des barres
+            setInterval(() => {
+                document.querySelectorAll('.dyn-bw').forEach((el, index) => {
+                    let base = parseInt(el.getAttribute('data-base'));
+                    if (base > 0) {
+                        // Variation de -10% à +15%
+                        let variation = Math.floor(base * (Math.random() * 0.25 - 0.1)); 
+                        let current = base + variation;
+                        el.innerText = current;
+                        
+                        // Met à jour la barre de chargement correspondante
+                        let bars = document.querySelectorAll('.dyn-bar');
+                        if(bars[index]) {
+                            // Calcul d'un pourcentage factice basé sur une max théorique (6000)
+                            let pct = Math.min(100, (current / 6000) * 100 * (Math.random() * 1.5 + 0.5));
+                            if (current > 5000) pct = 95 + Math.random() * 5; // L'IA sature la ligne
+                            bars[index].style.width = pct + '%';
+                        }
+                    }
+                });
+            }, 800);
+        }
+
+        // --- CANVAS : GRAPHIQUE RÉSEAU MULTI-LIGNES ---
+        function initNetworkCanvas() {
+            const canvas = document.getElementById('networkCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+
+            let time = 0;
+            
+            function draw() {
+                // Effet de traînée pour l'oscillation
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Ligne de flux principal (Cyan)
+                ctx.beginPath();
+                for(let i = 0; i < canvas.width; i += 5) {
+                    let noise = (Math.random() - 0.5) * 10;
+                    let y = (canvas.height / 2) + Math.sin(i * 0.05 + time) * 20 + Math.cos(i * 0.02 - time) * 15 + noise;
+                    if(i === 0) ctx.moveTo(i, y);
+                    else ctx.lineTo(i, y);
+                }
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2;
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#00f0ff';
+                ctx.stroke();
+
+                // Ligne de flux de cryptage (Magenta)
+                ctx.beginPath();
+                for(let i = 0; i < canvas.width; i += 10) {
+                    let y = (canvas.height / 2) + Math.cos(i * 0.03 + time * 1.5) * 30 + (Math.random() * 5);
+                    if(i === 0) ctx.moveTo(i, y);
+                    else ctx.lineTo(i, y);
+                }
+                ctx.strokeStyle = '#ff0055';
+                ctx.lineWidth = 1;
+                ctx.shadowBlur = 5;
+                ctx.shadowColor = '#ff0055';
+                ctx.stroke();
+
+                time += 0.1;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // --- GÉNÉRATEUR DE LOGS DE DÉCRYPTAGE ---
+        const commsLog = document.getElementById('comms-log');
+        const hexChars = "0123456789ABCDEF!@#$%^&*";
+        
+        function generateRandomString(length) {
+            let result = '';
+            for(let i=0; i<length; i++) result += hexChars.charAt(Math.floor(Math.random() * hexChars.length));
+            return result;
+        }
+
+        function addLogLine() {
+            const div = document.createElement('div');
+            div.className = 'log-line';
+            
+            const rand = Math.random();
+            let text = "";
+            
+            if (rand > 0.9) {
+                text = `<span class="log-alert">>> TENTATIVE INTRUSION DÉTECTÉE SUR PORT ${Math.floor(Math.random()*9000+1000)} <<</span>`;
+            } else if (rand > 0.7) {
+                text = `Décryptage paquet [${generateRandomString(8)}] : <span class="log-highlight">SUCCÈS</span>`;
+            } else {
+                text = `0x${generateRandomString(4)}: ${generateRandomString(12)}... ROUTAGE FTL OK.`;
+            }
+
+            div.innerHTML = text;
+            commsLog.appendChild(div);
+            
+            // Garder seulement les 50 dernières lignes
+            if(commsLog.childElementCount > 50) {
+                commsLog.removeChild(commsLog.firstChild);
+            }
+            
+            commsLog.scrollTop = commsLog.scrollHeight;
+            
+            // Prochaine ligne entre 50ms et 1000ms
+            setTimeout(addLogLine, Math.random() * 950 + 50);
+        }
+        addLogLine();
+    </script>
+</body>
+</html>
