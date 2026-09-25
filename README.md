@@ -6,15 +6,15 @@
 
 Le vaisseau est divisé en 5 zones isolées (conteneurs), chacune hébergeant son propre serveur web Apache2 et son propre réseau :
 
-* ** Z1-AgriTech** : Botanique et capteurs environnementaux.
+* **Z1-AgriTech** : Botanique et capteurs environnementaux.
 
-* ** Z2-BedTech** : Stase et moniteurs biométriques.
+* **Z2-BedTech** : Stase et moniteurs biométriques.
 
-* ** Z3-HealthTech** : Infirmerie centrale avec moteur de rendu d'électrocardiogramme (ECG) en direct (HTML5 Canvas).
+* **Z3-HealthTech** : Infirmerie centrale avec moteur de rendu d'électrocardiogramme (ECG) en direct (HTML5 Canvas).
 
-* ** Z4-OpenSpaceTech** : Hub de communication avec intercepteur de flux, radar d'ondes quantiques et décryptage terminal.
+* **Z4-OpenSpaceTech** : Hub de communication avec intercepteur de flux, radar d'ondes quantiques et décryptage terminal.
 
-* ** Z5-EnergyTech** : Salle des machines lourde, simulation de réacteur plasma et surveillance thermique critique.
+* **Z5-EnergyTech** : Salle des machines lourde, simulation de réacteur plasma et surveillance thermique critique.
 
 Toutes les interfaces web sont autonomes, alimentées par des bases de données locales (`.csv`), et animées en JavaScript pur pour simuler la vie du vaisseau sans nécessiter de backend lourd.
 
