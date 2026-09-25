@@ -78,6 +78,14 @@ Le projet intègre un script d'audit (`monitoring.sh`) exécuté depuis le Serve
 
 4. **Badgeuse :**
    Pour utiliser les scripts python de `badgeuse/hardware` et la gestion dans le dashboard branchez un lecteur de badge RFID, un écran et un Haut parleur pour simuler une badgeuse de zone avec carte RFID (NFC) de préférence sur RaspberryPi 4 model B.
+
+   <img width="445" height="668" alt="image" src="https://github.com/user-attachments/assets/98f79794-084f-47e4-b109-79fbdc9cfa9c" />
+   
+   <img width="309" height="668" alt="image" src="https://github.com/user-attachments/assets/15c2f548-5520-43a6-94c0-673c3f502391" />
+   
+    <img width="1448" height="668" alt="image" src="https://github.com/user-attachments/assets/0c1d44e2-9084-4aeb-888c-87efff12cf67" />
+
+
    
 ## 🌐 Routage et Réseau
 
