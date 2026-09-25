@@ -7,20 +7,34 @@
 Le vaisseau est divisé en 5 zones isolées (conteneurs), chacune hébergeant son propre serveur web Apache2 et son propre réseau :
 
 * **Z1-AgriTech** : Botanique et capteurs environnementaux.
+  <img width="1900" height="888" alt="image" src="https://github.com/user-attachments/assets/1e66a63b-cf04-4820-b1e7-7f6591c30a1e" />
+
 
 * **Z2-BedTech** : Stase et moniteurs biométriques.
+  <img width="1902" height="885" alt="image" src="https://github.com/user-attachments/assets/6a37a4e4-d7ab-4f3a-917c-402853365b4c" />
+
 
 * **Z3-HealthTech** : Infirmerie centrale avec moteur de rendu d'électrocardiogramme (ECG) en direct (HTML5 Canvas).
+   <img width="1920" height="887" alt="image" src="https://github.com/user-attachments/assets/8c46c4cb-d149-4bbb-a418-fdd053a44ca5" />
+
 
 * **Z4-OpenSpaceTech** : Hub de communication avec intercepteur de flux, radar d'ondes quantiques et décryptage terminal.
+  <img width="1864" height="888" alt="image" src="https://github.com/user-attachments/assets/18f29475-bcfd-43ea-bae9-7536e0b75b4f" />
+
 
 * **Z5-EnergyTech** : Salle des machines lourde, simulation de réacteur plasma et surveillance thermique critique.
+  <img width="1917" height="883" alt="image" src="https://github.com/user-attachments/assets/f2b54664-16f4-4231-9b10-ba24736971de" />
+
+
 
 Toutes les interfaces web sont autonomes, alimentées par des bases de données locales (`.csv`), et animées en JavaScript pur pour simuler la vie du vaisseau sans nécessiter de backend lourd.
 
 ## 🛡️ Système de Sécurité (Threat Hunting)
 
-Le projet intègre un script d'audit (`monitoring.sh`) exécuté depuis le Serveur Central (l'hôte Raspberry Pi). Ce script agit comme un système immunitaire pour le vaisseau :
+Le projet intègre un script d'audit (`monitoring.sh`) exécuté depuis le Serveur Central (l'hôte Raspberry Pi). Ce script agit comme un système immunitaire pour le vaisseau et renvoie les données sur le Dashboard:
+
+<img width="1902" height="889" alt="image" src="https://github.com/user-attachments/assets/851d3616-3c20-4309-8b4f-a2cdded08d5e" />
+
 
 * **Surveillance Continue** : Scanne les conteneurs à la recherche de compromissions.
 
