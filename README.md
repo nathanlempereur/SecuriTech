@@ -85,16 +85,6 @@ Le projet intègre un script d'audit (`monitoring.sh`) exécuté depuis le Serve
    
     <img width="1448" height="668" alt="image" src="https://github.com/user-attachments/assets/0c1d44e2-9084-4aeb-888c-87efff12cf67" />
 
-    <img width="1903" height="895" alt="image" src="https://github.com/user-attachments/assets/accc5819-a21d-451b-b32e-c7f18cd542cd" />
-
-    <img width="1904" height="888" alt="image" src="https://github.com/user-attachments/assets/143cadab-9f21-4b55-90cd-ddde7877c223" />
-
-    <img width="1901" height="892" alt="image" src="https://github.com/user-attachments/assets/8bab06a9-8f91-4bc9-8c31-e79de8147f45" />
-
-
-
-
-
    
 ## 🌐 Routage et Réseau
 
