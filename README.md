@@ -42,7 +42,7 @@ Le projet intègre un script d'audit (`monitoring.sh`) exécuté depuis le Serve
 
   * Détection d'utilisateurs non autorisés (`/etc/passwd`).
 
-  * Détection de portes dérobées SSH (Ajout de clés dans `authorized_keys`) ou de fichier de configs.
+  * Détection de portes dérobées SSH (Ajout de clés dans `authorized_keys`) ou de fichiers de configs.
 
   * Détection de processus malveillants `exe` exécutés depuis `/tmp`.
 
