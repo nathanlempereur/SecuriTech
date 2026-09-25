@@ -77,7 +77,7 @@ Le projet intègre un script d'audit (`monitoring.sh`) exécuté depuis le Serve
    Mettre les dossier var et etc dans leurs emplacement de base (a la racine juste ajouter les fichiers des répertoires) , le .service dans votre dossier de service, les .bashrc dans votre dossier user (/root), et les autres dossier nommée en zone et le SecureTech à la racine `/`
 
 4. **Badgeuse :**
-   Pour utiliser les scripts python de `badgeuse/hardware` et la gestion dans le dashboard branchez un lecteur de badge RFID, un écran et un Haut parleur pour simuler une badgeuse de zone avec carte RFID (NFC) de préférence sur RaspberryPi 4 model B.
+   Pour utiliser les scripts python de `badgeuse/hardware` et la gestion dans le dashboard branchez un lecteur de badge RFID, un écran et un Haut parleur pour simuler une badgeuse de zone avec carte RFID (NFC) de préférence sur RaspberryPi 4 model B et liez le dashboard a une BDD Postgres.
 
    <img width="445" height="668" alt="image" src="https://github.com/user-attachments/assets/98f79794-084f-47e4-b109-79fbdc9cfa9c" />
    
